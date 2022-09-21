@@ -3,9 +3,28 @@ import socket
 import datetime as dt
 import threading
 import sys
+from colorama import *
 
-pseudo = sys.argv[0]
-host, port = sys.argv[1], 4287  # IP de la machine cible
+init()
+
+
+print("\n" * 100)  # To erase any content
+
+
+def get_args():
+    _host, _pseudo = "", ""
+    for arg in sys.argv:
+        if "host=" in arg:
+            _host = "".join(arg.split("=")[1:])
+        elif "pseudo=" in arg:
+            _pseudo = "".join(arg.split("=")[1:])
+    return _host, _pseudo
+
+
+host, pseudo = get_args()
+print(Fore.LIGHTGREEN_EX + f"You're connected to {host}, {pseudo}\n")
+port = 4287  # IP de la machine cible
+print(f"Connected on {host}:{port}\n")
 
 
 class ClientThread(threading.Thread):
@@ -18,7 +37,7 @@ class ClientThread(threading.Thread):
             data = self.conn.recv(8192).decode("utf-8")
             if not data:
                 break
-            print(data)
+            print(Fore.LIGHTGREEN_EX + data)
         self.conn.close()
 
 
@@ -31,7 +50,7 @@ def send_message(sk, msg):
     msg = message(msg)
     data = msg.encode("utf-8")  # Return the utf-8 encoded text to transfer using the socket protocol
     sk.sendall(data)
-    print(msg)
+    print(Fore.LIGHTGREEN_EX + msg)
 
 
 class ConnectionError(Exception):
@@ -67,5 +86,5 @@ def send():
             sk.close()
 
 
-threading.Thread(target=send).start()
 threading.Thread(target=rcv).start()
+send()
