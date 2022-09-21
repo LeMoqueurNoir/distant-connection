@@ -4,8 +4,10 @@ import socket
 import threading
 import subprocess
 import datetime as dt
+import sys
 
-adresses = []
+ip_adress = sys.argv[-1]
+print("\n" * 100)  # To erase any content
 
 
 def find_ipv4():
@@ -13,13 +15,13 @@ def find_ipv4():
     lines = output.split("\n")
     ipv4_line = [line for line in lines if "ipv4" in line.lower()][0]
     ipv4 = ""
-    i = len(ipv4_line) - 1
+    i = len(ipv4_line)
     while True:
+        i -= 1
         char = ipv4_line[i]
         if char not in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', "."]:
             break
         ipv4 += char
-        i -= 1
     ipv4 = ipv4[::-1]
     return ipv4
 
@@ -63,9 +65,7 @@ def send():
 
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            while not adresses:
-                pass
-            s.connect((adresses[0], port))
+            s.connect((ip_adress, port))
             send_message(s=s, msg=input_user)
 
         except Exception as e:
@@ -75,16 +75,13 @@ def send():
 
 
 def rcv():
-    global adresses
     while True:
         sk.listen(5)
         conn, address = sk.accept()
-        if address not in adresses:
-            adresses = [address]
         client_thread = ClientThread(conn)
         client_thread.start()
     conn.close()
 
 
 threading.Thread(target=rcv).start()
-threading.Thread(target=send).start()
+send()
