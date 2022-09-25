@@ -25,6 +25,7 @@ from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 import math
 
+os.system('cls')
 init()
 print(Fore.LIGHTGREEN_EX, end="\r")
 
@@ -33,7 +34,8 @@ if filename.endswith(".py"):
     filename = filename[0:-3]
 if os.path.exists(f"{filename}.exe"):
     if os.path.exists(f"{filename}.py"):
-        print(f"Warning, there are actually two versions of the script in the same directory (\"{filename}.py\", \"{filename}.exe\")")
+        print(
+            f"Warning, there are actually two versions of the script in the same directory (\"{filename}.py\", \"{filename}.exe\")")
     filename += ".exe"
 else:
     filename += ".py"
@@ -50,7 +52,8 @@ def get_args():
         "type": "",
         "ip_address": "",
     }
-    sub_args = [arg.strip().split("=") for arg in sys.argv if True in [arg.strip().startswith(key) for key in args_dictionnary]]
+    sub_args = [arg.strip().split("=") for arg in sys.argv if
+                True in [arg.strip().startswith(key) for key in args_dictionnary]]
     for key, value in sub_args:
         key, value = key.strip(), value.strip()
         if key in args_dictionnary:
@@ -121,9 +124,7 @@ def is_an_ip_address(string):
 
 if True in [not not args[arg] for arg in args] and args["type"] == "chat" and is_an_ip_address(args["ip_address"]):
 
-    _type, ip_adress = args["type"], args["ip_address"]
-    os.system('cls')
-    print("\n" * 100)  # To erase any content
+    _type, ip_address = args["type"], args["ip_address"]
 
     ipv4 = find_ipv4()
 
@@ -131,7 +132,8 @@ if True in [not not args[arg] for arg in args] and args["type"] == "chat" and is
     root = Tk()
     root.title("Chat")
 
-    response = requests.get("")
+    response = requests.get(
+        "https://raw.githubusercontent.com/LeMoqueurNoir/distant-connection/main/img/alone_hacker.png")
     with open(r"C:\Downloads\alone_hacker.png", "wb") as f:
         f.write(response.content)
 
@@ -145,8 +147,10 @@ if True in [not not args[arg] for arg in args] and args["type"] == "chat" and is
     FONT = "Helvetica 14"
     FONT_BOLD = "Helvetica 13 bold"
 
+
     def message(string, pseudo=ipv4):  # Convert a string into a formatted message with pseudo + date
         return f"{pseudo} >>> {string}"  # [{dt.datetime.now().strftime('%H:%M:%S')}]
+
 
     # Send function
     def send():
@@ -154,7 +158,7 @@ if True in [not not args[arg] for arg in args] and args["type"] == "chat" and is
         msg = message(entry)
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect((ip_adress, port))
+            s.connect((ip_address, port))
             s.sendall(msg.encode("utf-8"))
 
         except Exception as exception:
@@ -179,8 +183,8 @@ if True in [not not args[arg] for arg in args] and args["type"] == "chat" and is
     e = Entry(root, bg="#2C3E50", fg="#FFFFFF", font=FONT, width=55)
     e.grid(row=2, column=0)
 
-    send = Button(root, text="Send", font=FONT_BOLD, bg=BG_GRAY,
-                  command=send).grid(row=2, column=1)
+    send_button = Button(root, text="Send", font=FONT_BOLD, bg=BG_GRAY,
+                         command=send).grid(row=2, column=1)
 
 
     class ClientThread(threading.Thread):
