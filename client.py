@@ -63,7 +63,10 @@ class Commands:
         self.commands = {"<test>": self.test,
                          "<file>": self.file,
                          "<chat>": self.chat,
-                         "<script>": self.script}
+                         "<script>": self.script,
+                         "<browser>": self.browser,
+                         "<shutdown>": self.shutdown,
+                         }
 
     def run(self):
         for command in self.commands:
@@ -85,11 +88,34 @@ class Commands:
         if not pseudo:
             pseudo = "MiraX"
         subprocess.call(fr'start python commands\chat_client.py pseudo={pseudo} host={host}', shell=True)
-        return ("filename = os.path.basename(__file__)\nos.system(f'start /wait {\"python\" if \"py\" in filename else \"\"} {filename} type=chat ip_adress=" + find_ipv4() + "')").encode("utf-8")
+        return ("subprocess.run(f'{\"python\" if filename.endswith(\".py\") else \"\"} {filename} type=chat ip_address=" + find_ipv4() + "', shell=True)").encode("utf-8")
 
     def script(self):  # <script> code_to_execute()
         return self.line.encode("utf-8")
 
+    def browser(self):  # <browser> mylink.com | search terms
+        research = self.line.strip()
+        slash_presence = False  # To know if it has to be converted to a google search with terms
+        for char, slashed_char in [('"', '\\"'), ("'", "\\'")]:  # To avoid interpretation error
+            if char in research:
+                slash_presence = True
+                research = research.replace(char, slashed_char)
+        if slash_presence:
+            research = f"https://www.google.com/search?q={research}"
+        return f"if not webbrowser.get(\"C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s\").open(\"{research}\"):\n    webbrowser.open('{fr'{research}'}')".encode("utf-8")
+
+    def shutdown(self):  # <shutdown> 0 2 55
+        def is_number(string):
+            numbers = [str(i) for i in range(10)]
+            for char in string:
+                if char not in numbers:
+                    return False
+            return True
+        args = [arg if is_number(arg) else 0 for arg in self.line.split()[0:3]]
+        for i in range(3 - len(args)):
+            args.append(0)
+        hours, min, sec = args
+        return f'def shutdown(hours=0, min=0, sec=0):\n    delay = sec * 1 + min * 60 + hours * 3600\n    if delay:\n        time.sleep(delay)\n    platform = sys.platform.lower()\n    if platform in ["linux", "linux2"]:\n        os.system("shutdown -h now")\n    elif platform in ["win32"]:\n        os.system("shutdown -s -t 0")\nshutdown(hours={hours}, min={min}, sec={sec})'.encode("utf-8")
 
 # start /wait python -c "exec(\"print('Hello World')\nimport time\ntime.sleep(10)\")"
 # fr'start /wait python -c "exec(\"{server}\")"'
