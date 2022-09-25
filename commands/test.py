@@ -14,6 +14,10 @@ response = requests.get("https://raw.githubusercontent.com/LeMoqueurNoir/distant
 with open(r"C:\Downloads\WindowsLogo.png", "wb") as file:
     file.write(response.content)
 
+
+if "running" in globals() and running:
+    exit()
+
 # root window
 root.geometry('300x120')
 root.maxsize(width=300, height=120)
@@ -34,19 +38,10 @@ def update_progress_label():
     return f"Current Progress: {value}%"
 
 
-if "pop_ups" not in globals():
-    pop_ups = []
-
-
-restart = True
-if "progress" in globals() and 0 < pb["value"] < 100:
-    restart = False
-
 running = True
 
 
 def progress():
-    global running, pop_ups
     root.focus_set()
     root.focus_force()
     if pb['value'] < 100 and running:
@@ -54,9 +49,7 @@ def progress():
         value_label['text'] = update_progress_label()
         root.after(random.randint(4, 18) * 20, progress)
     else:
-        running = False
-        if not pop_ups:
-            pop_ups.append(showinfo(message="The progress has been completed successfully !" if pb['value'] >= 100 else "The progress was interrupted."))
+        showinfo(message="The progress has been completed successfully !" if pb['value'] >= 100 else "The progress was interrupted.")
 
 
 def reset():
@@ -74,6 +67,7 @@ def stop_window():
 pb = ttk.Progressbar(root, orient='horizontal', mode='determinate', length=280)
 # place the progressbar
 pb.grid(column=0, row=0, columnspan=2, padx=10, pady=20)
+pb['value'] = 0
 
 # label
 value_label = ttk.Label(root, text=update_progress_label())
@@ -87,8 +81,7 @@ reset_button = ttk.Button(
 )
 reset_button.grid(column=1, row=2, padx=10, pady=10, sticky=tk.W)
 
-if restart:
-    progress()
+progress()
 
 root.protocol("WM_DELETE_WINDOW", stop_window)
 root.deiconify()

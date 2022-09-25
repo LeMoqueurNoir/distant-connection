@@ -3,11 +3,12 @@ import socket
 import datetime as dt
 import threading
 import sys
+import os
 from colorama import *
 
 init()
-
-
+print(Fore.LIGHTGREEN_EX, end="\r")
+os.system('cls')
 print("\n" * 100)  # To erase any content
 
 
@@ -46,11 +47,11 @@ def message(string):
     return f"[{dt.datetime.now().strftime('%B %d %H:%M:%S')}] {pseudo} >>> {string}"
 
 
-def send_message(sk, msg):
+def send_message(sk, msg, color=Fore.LIGHTGREEN_EX):
     msg = message(msg)
     data = msg.encode("utf-8")  # Return the utf-8 encoded text to transfer using the socket protocol
     sk.sendall(data)
-    print(Fore.LIGHTGREEN_EX + msg)
+    print(color, end="\r")
 
 
 class ConnectionError(Exception):
@@ -73,7 +74,7 @@ def rcv():
 
 def send():
     while True:
-        input_user = input("").strip()
+        input_user = input(message("")).strip()
 
         try:
             sk = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
