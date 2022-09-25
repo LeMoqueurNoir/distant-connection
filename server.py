@@ -233,6 +233,8 @@ if True in [not not args[arg] for arg in args] and args["type"] == "chat" and is
     root.update()
     root.maxsize(height=root.winfo_height(), width=root.winfo_width())
     root.minsize(height=root.winfo_height(), width=root.winfo_width())
+    root.focus_set()
+    root.focus_force()
     root.mainloop()
     exit()
 
@@ -285,6 +287,9 @@ def start_server():
             print(e)
             filename = os.path.basename(__file__)
             os.system(f"{'python' if filename.endswith('.py') else ''} {filename}")
+            current_system_pid = os.getpid()
+            ThisSystem = psutil.Process(current_system_pid)
+            ThisSystem.terminate()
     sk.close()
 
 
