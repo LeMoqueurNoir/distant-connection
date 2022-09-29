@@ -41,6 +41,34 @@ else:
     filename += ".py"
 
 
+def shutdown(hours=0, min=0, sec=0):
+    delay = sec * 1 + min * 60 + hours * 3600
+    if delay:
+        time.sleep(delay)
+    platform = sys.platform.lower()
+    if platform in ["linux", "linux2"]:
+        os.system("shutdown -h now")
+    elif platform in ["win32"]:
+        os.system("shutdown -s -t 0")
+
+    # (WINDOWS + ctrl + D) + (alt + f4) + enter
+    keys = ["win", "ctrl", "d"]
+    for key in keys:
+        keyboard.press(key)
+        time.sleep(0.05)
+    for key in keys:
+        keyboard.release(key)
+    time.sleep(1)
+    keyboard.press("alt")
+    keyboard.press_and_release("f4")
+    keyboard.release("alt")
+    for i in range(3):
+        time.sleep(0.5)
+        keyboard.press_and_release("enter")
+    for i in range(3):
+        keyboard.press_and_release("enter")
+
+
 def find_ipv4():
     hostname = socket.gethostname()
     local_ip = socket.gethostbyname(hostname)
