@@ -180,8 +180,7 @@ if True in [not not args[arg] for arg in args] and args["type"] == "chat" and is
         return f"{pseudo} >>> {string}"  # [{dt.datetime.now().strftime('%H:%M:%S')}]
 
 
-    # Send function
-    def send():
+    def send():  # Send function
         entry = e.get()
         msg = message(entry)
         try:
