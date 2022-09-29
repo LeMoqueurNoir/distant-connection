@@ -99,7 +99,7 @@ class Sound:
     volume = cast(interface, POINTER(IAudioEndpointVolume))
     range = volume.GetVolumeRange()
     min, max = range[0], range[1]
-    distance = ((max - min) ** 2)
+    distance = ((max - min) ** 2) ** 0.5
 
     def get(self):  # Using Decibels
         # Get current volume
@@ -113,6 +113,9 @@ class Sound:
     def increase(self):
         keyboard.press("volume up")
 
+    def decrease(self):
+        keyboard.press("volume down")
+
     def set_to_max(self):
         for i in range(100):  # 50 could be good enough
             self.increase()
@@ -122,9 +125,6 @@ class Sound:
         for i in range(100):  # 50 could be good enough
             self.decrease()
         self.mute()
-
-    def decrease(self):
-        keyboard.press("volume down")
 
     def unmute(self):  # When keys are pressed, sound is activated
         self.increase()
