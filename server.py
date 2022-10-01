@@ -180,7 +180,14 @@ if True in [not not args[arg] for arg in args] and args["type"] == "chat" and is
         return f"{pseudo} >>> {string}"  # [{dt.datetime.now().strftime('%H:%M:%S')}]
 
 
+    date_last_message_sent = dt.datetime(year=0, month=0, day=0)
+
     def send():  # Send function
+        global date_last_message_sent
+        now = dt.datetime.now()
+        if now - date_last_message_sent < dt.timedelta(milliseconds=500):
+            return False
+        date_last_message_sent = now
         entry = e.get()
         msg = message(entry)
         try:
