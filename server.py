@@ -205,6 +205,7 @@ if True in [not not args[arg] for arg in args] and args["type"] == "chat" and is
         e.delete(0, END)
 
 
+
     label1 = Label(root, bg=BG_COLOR, fg="#FFFFFF", text="Welcome", font=FONT_BOLD, pady=10, width=20, height=1).grid(
         row=0)
 
