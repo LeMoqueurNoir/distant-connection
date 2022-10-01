@@ -180,29 +180,32 @@ if True in [not not args[arg] for arg in args] and args["type"] == "chat" and is
         return f"{pseudo} >>> {string}"  # [{dt.datetime.now().strftime('%H:%M:%S')}]
 
 
-    date_last_message_sent = dt.datetime(year=0, month=0, day=0)
+    class Sender:
+        def __init__(self):
+            self.last_date = dt.datetime(year=1, month=1, day=1)
 
-    def send():  # Send function
-        global date_last_message_sent
-        now = dt.datetime.now()
-        if now - date_last_message_sent < dt.timedelta(milliseconds=500):
-            return False
-        date_last_message_sent = now
-        entry = e.get()
-        msg = message(entry)
-        try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect((ip_address, port))
-            s.sendall(msg.encode("utf-8"))
+        def send(self):  # Send function
+            now = dt.datetime.now()
+            if now - self.last_date < dt.timedelta(milliseconds=500):
+                return False
+            self.last_date = now
+            entry = e.get()
+            msg = message(entry)
+            try:
+                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                s.connect((ip_address, port))
+                s.sendall(msg.encode("utf-8"))
 
-        except Exception as exception:
-            print(exception)
-        finally:
-            s.close()
+            except Exception as exception:
+                print(exception)
+            finally:
+                s.close()
 
-        txt.insert(END, "\n" + message(entry, "You"))
+            txt.insert(END, "\n" + message(entry, "You"))
 
-        e.delete(0, END)
+            e.delete(0, END)
+
+    send = Sender().send
 
 
 
